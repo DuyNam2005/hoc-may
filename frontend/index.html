@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>BikeDemand — Dự báo theo giờ</title>
+  <link rel="stylesheet" href="/static/style.css">
+  <script src="/static/script.js" defer></script>
+</head>
+<body>
+  <header>
+    <strong>BikeDemand</strong>
+    <nav>
+      <a href="/about">Giới thiệu & mô hình</a>  
+      <a href="/" aria-current="page">Dự báo</a>
+      <a href="/evaluation">Đánh giá</a>
+      <a href="/docs">API</a>
+    </nav>
+  </header>
+
+  <main>
+    <p class="eyebrow">DỮ LIỆU LỊCH SỬ 2011–2012</p>
+    <h1>Dự báo lượt thuê xe đạp theo giờ</h1>
+    <p class="intro">
+      Nhập kịch bản thời gian và thời tiết để thử mô hình.
+      Ứng dụng chưa được xác thực cho nhu cầu hiện tại.
+    </p>
+
+    <div class="layout">
+      <section class="card">
+        <h2>Kịch bản dự báo</h2>
+        <p>
+          Các trường thời tiết dùng giá trị chuẩn hóa từ 0 đến 1
+          theo CSV. Nhiệt độ chưa được nhập theo °C.
+        </p>
+
+        <form id="forecast-form">
+          <fieldset id="inputs">
+            <div class="fields">
+              <label>
+                Ngày dự báo
+                <input name="forecast_date" type="date"
+                  min="2011-01-01" max="2012-12-31" required>
+              </label>
+
+              <label>
+                Giờ dự báo (0–23)
+                <input name="hr" type="number"
+                  min="0" max="23" step="1" required>
+              </label>
+
+              <label>
+                Mã mùa theo dữ liệu gốc
+                <select name="season" required>
+                  <option value="">Chọn mã mùa</option>
+                  <option value="1">Mã 1</option>
+                  <option value="2">Mã 2</option>
+                  <option value="3">Mã 3</option>
+                  <option value="4">Mã 4</option>
+                </select>
+              </label>
+
+              <label>
+                Ngày lễ theo lịch dữ liệu gốc
+                <select name="holiday" required>
+                  <option value="">Chọn trạng thái</option>
+                  <option value="0">Không</option>
+                  <option value="1">Có</option>
+                </select>
+              </label>
+
+              <label class="full">
+                Nhóm thời tiết
+                <select name="weathersit" required>
+                  <option value="">Chọn thời tiết</option>
+                  <option value="1">1 — Trời quang / ít mây</option>
+                  <option value="2">2 — Sương mù / nhiều mây</option>
+                  <option value="3">3 — Mưa nhẹ / tuyết nhẹ</option>
+                  <option value="4">4 — Thời tiết khắc nghiệt</option>
+                </select>
+              </label>
+
+              <label>
+                Nhiệt độ chuẩn hóa (0–1)
+                <input name="temp" type="number"
+                  min="0" max="1" step="any" required>
+              </label>
+
+              <label>
+                Nhiệt độ cảm nhận chuẩn hóa (0–1)
+                <input name="atemp" type="number"
+                  min="0" max="1" step="any" required>
+              </label>
+
+              <label>
+                Độ ẩm chuẩn hóa (0–1)
+                <input name="hum" type="number"
+                  min="0" max="1" step="any" required>
+                <small>Ví dụ: 0,8 tương ứng 80%.</small>
+              </label>
+
+              <label>
+                Tốc độ gió chuẩn hóa (0–1)
+                <input name="windspeed" type="number"
+                  min="0" max="1" step="any" required>
+              </label>
+            </div>
+
+            <div class="actions">
+              <button type="submit" id="submit-button">
+                Dự báo lượt thuê
+              </button>
+              <button type="button" id="sample-button" class="secondary">
+                Nạp kịch bản mẫu
+              </button>
+            </div>
+          </fieldset>
+        </form>
+      </section>
+
+      <section class="card result-card" aria-labelledby="result-title">
+        <h2 id="result-title">Kết quả dự báo</h2>
+        <p id="status" role="status" aria-live="polite">
+          Nhập thông tin hoặc nạp kịch bản mẫu để bắt đầu.
+        </p>
+
+        <div id="result" hidden>
+          <p id="forecast-time"></p>
+          <p class="prediction">
+            <strong id="prediction"></strong>
+            <span>lượt thuê / giờ</span>
+          </p>
+          <p id="model-version"></p>
+
+          <h3>Thông tin cần lưu ý</h3>
+          <ul id="warnings"></ul>
+
+          <details>
+            <summary>Chi tiết kỹ thuật</summary>
+            <pre id="technical-result"></pre>
+          </details>
+        </div>
+      </section>
+    </div>
+
+    <footer>
+      Nguồn:
+      <a href="https://archive.ics.uci.edu/dataset/275/bike+sharing+dataset"
+        target="_blank" rel="noopener">UCI Bike Sharing Dataset</a>.
+      Đầu ra là lượt thuê theo giờ, không phải số xe tồn tại từng trạm.
+    </footer>
+  </main>
+</body>
+</html>

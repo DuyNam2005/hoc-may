@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>BikeDemand — Giới thiệu và mô hình</title>
+  <link rel="stylesheet" href="/static/style.css">
+  <script src="/static/about.js" defer></script>
+</head>
+<body>
+  <header>
+    <strong>BikeDemand</strong>
+    <nav>
+      <a href="/about" aria-current="page">Giới thiệu & mô hình</a>
+      <a href="/">Dự báo</a>
+      <a href="/evaluation">Đánh giá</a>
+      <a href="/docs">API</a>
+    </nav>
+  </header>
+
+  <main>
+    <p class="eyebrow">PROJECT 11 · HỌC MÁY CƠ BẢN</p>
+    <h1>Dự báo nhu cầu thuê xe đạp theo giờ</h1>
+    <p class="intro">
+      BikeDemand minh họa cách sử dụng lịch và thời tiết để
+      ước lượng tổng lượt thuê trong một giờ, đồng thời trình bày
+      bằng chứng đánh giá và giới hạn của mô hình.
+    </p>
+
+    <section class="card dashboard-section">
+      <h2>Phạm vi sử dụng</h2>
+      <p>
+        Ứng dụng hỗ trợ thử các kịch bản trên dữ liệu lịch sử
+        Capital Bikeshare tại Washington, D.C., Hoa Kỳ,
+        trong giai đoạn 2011–2012.
+      </p>
+      <p>
+        Đầu ra là tổng lượt thuê theo giờ trong hệ thống của bộ dữ liệu.
+        Dữ liệu này chưa đủ để xác định số xe cần có tại từng trạm.
+      </p>
+      <p>
+        Thời tiết được người dùng cung cấp như một kịch bản.
+        Nếu dự báo cho tương lai trong thực tế, các đầu vào phải có
+        sẵn tại thời điểm dự báo, chẳng hạn từ dự báo thời tiết.
+      </p>
+      <a href="/">Thử dự báo →</a>
+    </section>
+
+    <section class="card dashboard-section">
+      <h2>Dữ liệu và nguồn</h2>
+      <ul>
+        <li>Tệp sử dụng: hour.csv, 17.379 bản ghi theo giờ.</li>
+        <li>Khoảng dữ liệu: 01/01/2011–31/12/2012.</li>
+        <li>
+          Kiểm tra ban đầu: không có ô trống hoặc mốc giờ trùng.
+          Thiếu 165 mốc giờ trong chuỗi thời gian.
+        </li>
+        <li>
+          Giờ thiếu được giữ là thiếu; không tự gán 0 lượt thuê.
+        </li>
+        <li>
+          Nguồn: UCI Machine Learning Repository; giấy phép CC BY 4.0.
+        </li>
+      </ul>
+      <p>
+        Trích dẫn: Fanaee-T, H. (2013). Bike Sharing [Dataset].
+        UCI Machine Learning Repository.
+        <a href="https://doi.org/10.24432/C5W894"
+          target="_blank" rel="noopener">DOI: 10.24432/C5W894</a>.
+      </p>
+    </section>
+
+    <section class="card dashboard-section">
+      <h2>Thông tin mô hình</h2>
+      <p id="model-status" role="status" aria-live="polite">
+        Đang tải thông tin…
+      </p>
+
+      <div id="model-content" hidden>
+        <p id="model-name"></p>
+        <p>
+          Pipeline gồm one-hot cho biến dạng nhóm, StandardScaler
+          cho biến số và hồi quy tuyến tính. Các bước đều học từ train.
+          Backend chỉ nạp pipeline đã lưu để dự báo.
+        </p>
+
+        <h3>Các biến đầu vào của mô hình</h3>
+        <p id="model-features"></p>
+        <p>
+          Ngày và giờ trên form được dùng để tạo các đặc trưng lịch.
+          Các biến temp, atemp, hum và windspeed đang sử dụng
+          giá trị chuẩn hóa trong CSV.
+        </p>
+
+        <h3>Chia dữ liệu theo thời gian</h3>
+        <div class="table-scroll">
+          <table>
+            <thead>
+              <tr>
+                <th scope="col">Tập</th>
+                <th scope="col">Bắt đầu</th>
+                <th scope="col">Kết thúc</th>
+              </tr>
+            </thead>
+            <tbody id="split-body"></tbody>
+          </table>
+        </div>
+
+        <h3>Cách chọn mô hình</h3>
+        <p>
+          LinearRegression được chọn theo MAE validation.
+          Tiêu chí ưu tiên MAE được chốt sau khi xem validation,
+          trước khi đánh giá test. Mô hình cuối giữ nguyên trạng thái
+          đã học từ train, không huấn luyện lại trên validation.
+        </p>
+        <p id="validation-summary"></p>
+
+        <h3>Tránh rò rỉ dữ liệu</h3>
+        <ul>
+          <li>
+            Loại casual và registered khỏi đầu vào vì tổng của chúng
+            bằng cnt, là giá trị cần dự báo.
+          </li>
+          <li>Không dùng instant làm đặc trưng dự báo.</li>
+          <li>Encoder và scaler chỉ fit trên train.</li>
+          <li>Test không dùng để chọn cấu hình hoặc mô hình.</li>
+          <li>
+            Random split chỉ là thí nghiệm minh họa;
+            kết quả chính sử dụng time split.
+          </li>
+        </ul>
+
+        <h3>Quy tắc đầu ra</h3>
+        <p>
+          Dự báo âm được đưa về 0 và có thông báo.
+          Khi đánh giá, dự báo không được làm tròn.
+          Số hiển thị trên giao diện được định dạng để dễ đọc.
+        </p>
+        <p id="peak-definition"></p>
+      </div>
+    </section>
+
+    <section class="card dashboard-section">
+      <h2>Giới hạn và sử dụng có trách nhiệm</h2>
+      <ul>
+        <li>Mô hình thường dự báo thấp ở giờ cao điểm.</li>
+        <li>MAE thời tiết xấu chưa tốt hơn baseline.</li>
+        <li>
+          Thời tiết loại 4 có rất ít mẫu train và không có mẫu
+          validation/test; chưa đủ bằng chứng đánh giá.
+        </li>
+        <li>
+          Không diễn giải hệ số hồi quy như bằng chứng quan hệ nhân quả.
+        </li>
+        <li>
+          Quy ước mã mùa và chuẩn hóa nhiệt độ giữa các tài liệu nguồn
+          còn khác nhau. Bản hiện tại giữ mã và giá trị CSV;
+          chưa chuyển nhiệt độ sang °C.
+        </li>
+        <li>
+          Chưa dùng kết quả để quyết định cung ứng hiện tại khi chưa
+          có dữ liệu mới và đánh giá tại địa phương phù hợp.
+        </li>
+      </ul>
+      <a href="/evaluation">Xem kết quả đánh giá →</a>
+    </section>
+  </main>
+</body>
+</html>

@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>BikeDemand — Đánh giá mô hình</title>
+  <link rel="stylesheet" href="/static/style.css">
+  <script src="/static/evaluation.js" defer></script>
+  <script src="/static/experiments.js" defer></script>
+</head>
+<body>
+  <header>
+    <strong>BikeDemand</strong>
+    <nav>
+      <a href="/about">Giới thiệu & mô hình</a>
+      <a href="/">Dự báo</a>
+      <a href="/evaluation" aria-current="page">Đánh giá</a>
+      <a href="/docs">API</a>
+    </nav>
+  </header>
+
+  <main>
+    <p class="eyebrow">ĐÁNH GIÁ CUỐI TRÊN TEST</p>
+    <h1>Mô hình dự báo tốt đến đâu?</h1>
+    <p class="intro">
+      So sánh mô hình đã chốt với baseline trên cùng giai đoạn tương lai.
+      Các kết quả được đọc từ báo cáo đã lưu.
+    </p>
+
+    <p id="evaluation-status" role="status" aria-live="polite">
+      Đang tải kết quả…
+    </p>
+
+    <div id="evaluation-content" hidden>
+      <p id="test-period"></p>
+
+      <div class="metrics-grid">
+        <section class="card">
+          <h2>MAE</h2>
+          <strong class="metric-value" id="metric-mae"></strong>
+          <p>Sai lệch tuyệt đối trung bình, lượt/giờ.</p>
+        </section>
+        <section class="card">
+          <h2>RMSE</h2>
+          <strong class="metric-value" id="metric-rmse"></strong>
+          <p>Phản ánh mạnh hơn các lỗi lớn, lượt/giờ.</p>
+        </section>
+        <section class="card">
+          <h2>R²</h2>
+          <strong class="metric-value" id="metric-r2"></strong>
+          <p>Không phải phần trăm độ chính xác.</p>
+        </section>
+      </div>
+
+      <section class="card dashboard-section">
+        <h2>So sánh với baseline</h2>
+        <div class="table-scroll">
+          <table>
+            <thead>
+              <tr>
+                <th scope="col">Mô hình</th>
+                <th scope="col">MAE ↓</th>
+                <th scope="col">RMSE ↓</th>
+                <th scope="col">R² ↑</th>
+              </tr>
+            </thead>
+            <tbody id="comparison-body"></tbody>
+          </table>
+        </div>
+        <p id="mae-improvement"></p>
+      </section>
+
+      <section class="card dashboard-section" aria-labelledby="sgd-heading">
+        <h2 id="sgd-heading">Thí nghiệm SGD với ba learning rate</h2>
+        <p>
+          Đây là kết quả trên validation, không phải test. Learning rate, số epochs
+          và seed bên dưới được đọc từ báo cáo đã lưu.
+        </p>
+        <p id="experiments-status" role="status" aria-live="polite">
+          Đang tải báo cáo thí nghiệm…
+        </p>
+        <div class="table-scroll">
+          <table>
+            <thead>
+              <tr>
+                <th scope="col">learning_rate</th>
+                <th scope="col">epochs</th>
+                <th scope="col">seed</th>
+                <th scope="col">MAE ↓</th>
+                <th scope="col">RMSE ↓</th>
+                <th scope="col">R² ↑</th>
+              </tr>
+            </thead>
+            <tbody id="sgd-body"></tbody>
+          </table>
+        </div>
+        <img id="sgd-chart" class="chart" loading="lazy"
+          alt="Đường cong học SGD với ba learning rate từ báo cáo thí nghiệm">
+        <p id="sgd-chart-status" role="status" aria-live="polite">
+          Đang tải biểu đồ SGD…
+        </p>
+      </section>
+
+      <section class="card dashboard-section" aria-labelledby="split-heading">
+        <h2 id="split-heading">Time split và random split</h2>
+        <p>
+          Thí nghiệm chỉ dùng phần train và validation ban đầu, giữ nguyên test cuối.
+          Hai cách chia có cùng số dòng train và validation nhưng các mẫu validation
+          khác nhau. Các chỉ số bên dưới là kết quả validation.
+        </p>
+        <p>
+          Random split chỉ dùng minh họa; time split là cách đánh giá chính cho
+          dự báo tương lai. Vì tập validation khác nhau, các chỉ số không phải
+          phép so sánh mô hình trên cùng một tập mẫu.
+        </p>
+        <p id="split-status" role="status" aria-live="polite">
+          Đang tải kết quả so sánh cách chia…
+        </p>
+        <div class="table-scroll">
+          <table>
+            <thead>
+              <tr>
+                <th scope="col">split</th>
+                <th scope="col">model</th>
+                <th scope="col">train_rows</th>
+                <th scope="col">validation_rows</th>
+                <th scope="col">MAE ↓</th>
+                <th scope="col">RMSE ↓</th>
+                <th scope="col">R² ↑</th>
+              </tr>
+            </thead>
+            <tbody id="split-body"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="card dashboard-section">
+        <h2>Thực tế và dự báo theo thời gian</h2>
+        <p>
+          Biểu đồ 7 ngày đầu của test. Các giờ thiếu để trống,
+          không được coi là có 0 lượt thuê.
+        </p>
+        <img id="test-chart" class="chart" loading="lazy"
+          alt="Biểu đồ lượt thuê thực tế, baseline và hồi quy
+          theo giờ trong 7 ngày đầu test">
+        <p id="chart-status" role="status"></p>
+      </section>
+
+      <section class="card dashboard-section">
+        <h2>Sai số theo nhóm</h2>
+        <p>
+          Bias dương là dự báo cao hơn thực tế; bias âm là dự báo thấp.
+          Nhóm không có mẫu chưa thể đánh giá.
+        </p>
+        <div class="table-scroll">
+          <table>
+            <thead>
+              <tr>
+                <th scope="col">Mô hình</th>
+                <th scope="col">Nhóm</th>
+                <th scope="col">Số giờ</th>
+                <th scope="col">MAE</th>
+                <th scope="col">RMSE</th>
+                <th scope="col">Bias</th>
+              </tr>
+            </thead>
+            <tbody id="groups-body"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="card dashboard-section">
+        <h2>Giới hạn cần lưu ý</h2>
+        <ul>
+          <li>Mô hình thường dự báo thấp trong giờ cao điểm.</li>
+          <li>
+            MAE của mô hình khi thời tiết xấu chưa vượt baseline.
+          </li>
+          <li>
+            Test không có mẫu thời tiết loại 4; chưa thể đánh giá nhóm này.
+          </li>
+          <li>
+            Kết quả thuộc dữ liệu lịch sử, chưa chứng minh khả năng
+            sử dụng cho địa phương và thời điểm hiện tại.
+          </li>
+        </ul>
+      </section>
+    </div>
+  </main>
+</body>
+</html>
