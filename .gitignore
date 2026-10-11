@@ -1,0 +1,23 @@
+# Môi trường Python
+.venv/
+.venv-check/
+venv/
+
+# Tệp tạm Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+
+# Cấu hình và thông tin riêng
+.env
+.env.*
+!.env.example
+.vscode/
+.idea/
+
+# Tệp hệ điều hành
+.DS_Store
+Thumbs.db
+
+# Log
+*.log
