@@ -1,0 +1,154 @@
+{
+  "evaluation_split": "test",
+  "model_version": "1.0",
+  "training_scope": "train_only_no_refit",
+  "prediction_policy": "maximum(raw_prediction, 0)",
+  "test_rows": 2888,
+  "test_start": "2012-09-01 00:00:00",
+  "test_end": "2012-12-31 23:00:00",
+  "test_sha256": "4f519f1ce92a4ec834ae7b7206f4fb48530205d022d4940f05340dad052eb22b",
+  "pipeline_sha256": "cb65165516184daf361212013db7f1fa26a84c56136141a71e8834b4bfab5f7a",
+  "negative_raw_prediction_count": 11,
+  "metrics": {
+    "Baseline": {
+      "MAE": 110.29600557187864,
+      "RMSE": 158.55787274303327,
+      "R2": 0.46939473643044016
+    },
+    "LinearRegression": {
+      "MAE": 102.76414347483926,
+      "RMSE": 137.60555155135205,
+      "R2": 0.6003610184551101
+    }
+  },
+  "group_metrics": [
+    {
+      "model": "Baseline",
+      "group": "All",
+      "n": 2888,
+      "MAE": 110.29600557187864,
+      "RMSE": 158.55787274303327,
+      "bias": -86.60475990582
+    },
+    {
+      "model": "Baseline",
+      "group": "Peak_workingday",
+      "n": 319,
+      "MAE": 266.7004211225174,
+      "RMSE": 300.57642182735646,
+      "bias": -218.5280724610957
+    },
+    {
+      "model": "Baseline",
+      "group": "Other_hours",
+      "n": 2569,
+      "MAE": 90.87482668489781,
+      "RMSE": 130.5520464289713,
+      "bias": -70.22346885672194
+    },
+    {
+      "model": "Baseline",
+      "group": "Bad_weather",
+      "n": 204,
+      "MAE": 89.22996514919342,
+      "RMSE": 126.54718511761523,
+      "bias": 16.333284361562658
+    },
+    {
+      "model": "Baseline",
+      "group": "Weather_1",
+      "n": 1761,
+      "MAE": 123.23939255164878,
+      "RMSE": 173.5057939678656,
+      "bias": -107.51562107908624
+    },
+    {
+      "model": "Baseline",
+      "group": "Weather_2",
+      "n": 923,
+      "MAE": 90.25718409284566,
+      "RMSE": 132.99431945298082,
+      "bias": -69.45994355091666
+    },
+    {
+      "model": "Baseline",
+      "group": "Weather_3",
+      "n": 204,
+      "MAE": 89.22996514919342,
+      "RMSE": 126.54718511761523,
+      "bias": 16.333284361562658
+    },
+    {
+      "model": "Baseline",
+      "group": "Weather_4",
+      "n": 0,
+      "MAE": null,
+      "RMSE": null,
+      "bias": null
+    },
+    {
+      "model": "LinearRegression",
+      "group": "All",
+      "n": 2888,
+      "MAE": 102.76414347483926,
+      "RMSE": 137.60555155135205,
+      "bias": -0.3673495456252474
+    },
+    {
+      "model": "LinearRegression",
+      "group": "Peak_workingday",
+      "n": 319,
+      "MAE": 222.8916936810788,
+      "RMSE": 253.62960646193798,
+      "bias": -181.50438083271226
+    },
+    {
+      "model": "LinearRegression",
+      "group": "Other_hours",
+      "n": 2569,
+      "MAE": 87.84756561738874,
+      "RMSE": 115.32020252941108,
+      "bias": 22.124948228053523
+    },
+    {
+      "model": "LinearRegression",
+      "group": "Bad_weather",
+      "n": 204,
+      "MAE": 91.75096239459394,
+      "RMSE": 120.67194130323381,
+      "bias": 37.11035948723337
+    },
+    {
+      "model": "LinearRegression",
+      "group": "Weather_1",
+      "n": 1761,
+      "MAE": 110.12026380618042,
+      "RMSE": 146.91673824406848,
+      "bias": -8.634534419570615
+    },
+    {
+      "model": "LinearRegression",
+      "group": "Weather_2",
+      "n": 923,
+      "MAE": 91.16345120710176,
+      "RMSE": 121.84998279812665,
+      "bias": 7.122422849081831
+    },
+    {
+      "model": "LinearRegression",
+      "group": "Weather_3",
+      "n": 204,
+      "MAE": 91.75096239459394,
+      "RMSE": 120.67194130323381,
+      "bias": 37.11035948723337
+    },
+    {
+      "model": "LinearRegression",
+      "group": "Weather_4",
+      "n": 0,
+      "MAE": null,
+      "RMSE": null,
+      "bias": null
+    }
+  ]
+}

@@ -1,0 +1,10 @@
+{
+  "model": "mean_by_weekday_hour",
+  "evaluation_split": "validation",
+  "metrics": {
+    "MAE": 127.83023720134193,
+    "RMSE": 168.88825217202637,
+    "R2": 0.4092821446314384
+  },
+  "fallback": "hour_mean_then_global_mean_from_train"
+}

@@ -1,0 +1,8 @@
+{
+  "seed": 42,
+  "data_scope": "original_train_and_validation_only",
+  "final_test_used": false,
+  "train_rows": 11539,
+  "validation_rows": 2952,
+  "purpose": "illustration_only"
+}

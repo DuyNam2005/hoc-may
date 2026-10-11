@@ -1,0 +1,23 @@
+{
+  "scope": "train_only",
+  "target_statistics": {
+    "count": 11539.0,
+    "mean": 154.43998613398043,
+    "std": 146.70496214172337,
+    "min": 1.0,
+    "25%": 33.0,
+    "50%": 116.0,
+    "75%": 226.0,
+    "max": 957.0
+  },
+  "iqr_lower_bound": -256.5,
+  "iqr_upper_bound": 515.5,
+  "iqr_flagged_rows": 353,
+  "outlier_policy": "flag_for_review_keep_all_rows",
+  "weather_counts": {
+    "1": 7578,
+    "2": 2945,
+    "3": 1013,
+    "4": 3
+  }
+}

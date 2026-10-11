@@ -1,0 +1,15 @@
+{
+  "peak_hours": [
+    8,
+    17,
+    18,
+    19
+  ],
+  "peak_requires_workingday": true,
+  "peak_selection": "top_4_hourly_means_on_training_workingdays",
+  "bad_weather_codes": [
+    3,
+    4
+  ],
+  "evaluation_split": "validation"
+}

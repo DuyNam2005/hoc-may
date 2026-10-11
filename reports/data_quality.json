@@ -1,0 +1,14 @@
+{
+  "file": "hour.csv",
+  "rows": 17379,
+  "original_columns": 17,
+  "missing_cells": 0,
+  "duplicate_rows": 0,
+  "duplicate_timestamps": 0,
+  "missing_hours": 165,
+  "start": "2011-01-01 00:00:00",
+  "end": "2012-12-31 23:00:00",
+  "target_sum_consistent": true,
+  "removed_rows": 0,
+  "missing_hour_policy": "keep_missing_do_not_fill_with_zero"
+}

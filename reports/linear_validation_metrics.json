@@ -1,0 +1,32 @@
+{
+  "model": "LinearRegression",
+  "status": "candidate",
+  "evaluation_split": "validation",
+  "features": [
+    "season",
+    "yr",
+    "mnth",
+    "hr",
+    "holiday",
+    "weekday",
+    "workingday",
+    "weathersit",
+    "temp",
+    "atemp",
+    "hum",
+    "windspeed"
+  ],
+  "sklearn_version": "1.9.1",
+  "prediction_policy": "raw_unrounded",
+  "metrics": {
+    "MAE": 109.09521313374746,
+    "RMSE": 138.0123988942362,
+    "R2": 0.6055268706575772
+  },
+  "baseline_metrics": {
+    "MAE": 127.83023720134193,
+    "RMSE": 168.88825217202637,
+    "R2": 0.4092821446314384
+  },
+  "negative_prediction_count": 0
+}

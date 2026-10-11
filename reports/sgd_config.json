@@ -1,0 +1,28 @@
+{
+  "learning_rates": [
+    0.0001,
+    0.001,
+    0.01
+  ],
+  "epochs": 200,
+  "seed": 42,
+  "loss": "squared_error",
+  "penalty": null,
+  "learning_rate_schedule": "constant",
+  "evaluation_split": "validation",
+  "prediction_policy": "raw_unrounded",
+  "features": [
+    "season",
+    "yr",
+    "mnth",
+    "hr",
+    "holiday",
+    "weekday",
+    "workingday",
+    "weathersit",
+    "temp",
+    "atemp",
+    "hum",
+    "windspeed"
+  ]
+}
