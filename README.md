@@ -119,7 +119,15 @@ Chạy lần lượt từ thư mục gốc:
 
 freeze_model.py từ chối ghi đè mô hình đã chốt.
 evaluate.py hiển thị kết quả đã lưu nếu test_metrics.json
-đã tồn tại.
+đã tồn tại, sau khi xác minh checksum mô hình, train,
+validation và test cùng cấu hình của báo cáo. Nếu không khớp,
+chương trình báo lỗi thay vì hiển thị điểm cũ.
+
+Checksum CSV được tính sau khi thống nhất xuống dòng về CRLF,
+phù hợp cấu hình bàn giao. Vì vậy LF/CRLF cho cùng checksum,
+nhưng thay đổi giá trị dữ liệu vẫn bị phát hiện. Mô hình joblib
+được kiểm tra nguyên byte. Quy tắc dùng chung nằm ở src/integrity.py;
+.gitattributes cũng quy định CRLF cho CSV khi checkout.
 
 Việc tái lập giữ nguyên cấu hình đã công bố; không dùng
 kết quả test để chọn lại mô hình.
@@ -213,8 +221,23 @@ Mở terminal thứ hai tại thư mục gốc và chạy:
 .\.venv\Scripts\python.exe -m unittest discover -s tests -v
 ```
 
-Bộ kiểm thử gồm 7 test, kiểm tra dự báo hợp lệ, đầu vào lỗi,
-trường thiếu/thừa, biến lịch và các API báo cáo.
+Bộ kiểm thử gồm kiểm thử API và kiểm thử checksum/báo cáo đã lưu.
+API được thử với dự báo hợp lệ, trường thiếu/thừa, biến lịch,
+báo cáo và đầu vào NaN/Infinity hoặc số quá lớn (trả 422).
+Kiểm thử offline xác nhận thay đổi mô hình/dữ liệu bị từ chối,
+còn thay đổi LF/CRLF của CSV vẫn dùng được báo cáo gốc.
+
+Bản kiểm chứng ngày 29/10/2026 có 17 phương thức kiểm thử:
+8 kiểm thử API và 9 kiểm thử xác minh dữ liệu/báo cáo. Các subTest
+thử thêm nhiều đầu vào trong mỗi phương thức. API Đánh giá dùng
+cùng bộ xác minh với evaluate.py; báo cáo thiếu, hỏng, sai phiên bản
+hoặc không khớp artifact trả 503.
+
+Toàn bộ 10 bước pipeline cũng đã được chạy lại trong bản sao riêng,
+không có sẵn models/reports/processed, trên cùng máy và môi trường Python.
+Metric test và các bảng SGD, split, lỗi theo nhóm khớp bản bàn giao
+trong sai số số thực. Chi tiết: [docs/VERIFICATION.md](docs/VERIFICATION.md).
+Đây chưa phải kiểm chứng cài mới trên máy khác.
 
 Đây là kiểm thử API, không thay thế kiểm tra tái lập toàn bộ
 pipeline hoặc kiểm tra giao diện trên các thiết bị.

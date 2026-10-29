@@ -9,9 +9,11 @@ import joblib
 import numpy as np
 import pandas as pd
 from fastapi import FastAPI, HTTPException
+from fastapi.exceptions import RequestValidationError
 from pydantic import BaseModel, ConfigDict, Field
-from fastapi.responses import FileResponse
+from fastapi.responses import FileResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
+from src.integrity import read_verified_test_report
 
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
@@ -80,6 +82,16 @@ app = FastAPI(
     version="1.0",
     lifespan=lifespan,
 )
+
+
+@app.exception_handler(RequestValidationError)
+async def validation_error_handler(request, exc):
+    # Do not echo input/ctx: non-finite floats cannot be serialized as JSON.
+    details = [
+        {key: error[key] for key in ("type", "loc", "msg")}
+        for error in exc.errors()
+    ]
+    return JSONResponse(status_code=422, content={"detail": details})
 
 
 @app.get("/api/health")
@@ -214,25 +226,14 @@ def homepage():
 
 @app.get("/api/evaluation")
 def evaluation():
-    result_path = PROJECT_ROOT / "reports" / "test_metrics.json"
-
-    if not result_path.exists():
+    try:
+        return read_verified_test_report(PROJECT_ROOT, app.state.model_config)
+    except (OSError, ValueError, TypeError, KeyError) as error:
+        logger.warning("Cannot serve test report: %s", error)
         raise HTTPException(
             status_code=503,
-            detail="Chưa có kết quả đánh giá test.",
-        )
-
-    with result_path.open(encoding="utf-8") as file:
-        result = json.load(file)
-
-    config = app.state.model_config
-    if result["pipeline_sha256"] != config["pipeline_sha256"]:
-        raise HTTPException(
-            status_code=503,
-            detail="Kết quả đánh giá không khớp mô hình đang phục vụ.",
-        )
-
-    return result
+            detail="Báo cáo test không có, không hợp lệ hoặc không khớp mô hình và dữ liệu.",
+        ) from error
 
 
 @app.get("/api/evaluation/chart", include_in_schema=False)

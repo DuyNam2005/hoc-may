@@ -85,5 +85,11 @@ hoặc dự báo nhu cầu từng trạm.
 3. Đặt hour.csv, day.csv và Readme.txt trực tiếp vào data/raw/.
 4. Đối chiếu SHA-256 với data/checksums.json.
 
+Checksum CSV của bản bàn giao dùng xuống dòng CRLF. Khi kiểm tra
+CSV trên máy dùng LF, dùng hàm checksum trong src/integrity.py để
+chuẩn hóa xuống dòng về CRLF trước khi băm. Các byte khác giữ nguyên;
+thay đổi số liệu vẫn làm checksum khác. Git cũng quy định CRLF cho
+CSV và Readme.txt gốc qua .gitattributes. Tệp mô hình được băm nguyên byte.
+
 Nếu checksum khác, kiểm tra phiên bản hoặc nội dung tệp
 trước khi tái lập kết quả.

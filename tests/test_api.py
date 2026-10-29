@@ -105,6 +105,31 @@ class TestBikeDemandAPI(unittest.TestCase):
                 status, _ = call_api("/api/forecast", payload)
                 self.assertEqual(status, 422)
 
+    def test_non_finite_weather(self):
+        for field in ("temp", "atemp", "hum", "windspeed"):
+            for value in (float("nan"), float("inf"), -float("inf")):
+                with self.subTest(field=field, value=value):
+                    status, data = call_api(
+                        "/api/forecast", {**SAMPLE, field: value}
+                    )
+                    self.assertEqual(status, 422)
+                    self.assertTrue(any(
+                        error["loc"][-1] == field for error in data["detail"]
+                    ))
+
+        # Valid JSON syntax whose numeric value overflows a Python float.
+        body = json.dumps(SAMPLE).replace('"temp": 0.24', '"temp": 1e999')
+        request = Request(
+            BASE_URL + "/api/forecast", data=body.encode("utf-8"),
+            headers={"Content-Type": "application/json"},
+        )
+        with self.assertRaises(HTTPError) as caught:
+            urlopen(request, timeout=15)
+        with caught.exception as error:
+            self.assertEqual(error.code, 422)
+            self.assertIn("detail", json.load(error))
+        self.assertEqual(call_api("/api/forecast", SAMPLE)[0], 200)
+
     def test_calendar_features(self):
         # 03/01/2011 là thứ Hai, không phải ngày lễ.
         payload = {

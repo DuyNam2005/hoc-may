@@ -1,0 +1,4 @@
+# Preserve the line endings used by the handed-over data checksums.
+*.csv text eol=crlf
+data/raw/Readme.txt text eol=crlf
+*.joblib binary

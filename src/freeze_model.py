@@ -1,4 +1,3 @@
-import hashlib
 import json
 from datetime import datetime, timezone
 
@@ -10,10 +9,7 @@ import sklearn
 from baseline import calculate_metrics
 from data import PROJECT_ROOT
 from features import FEATURE_COLUMNS
-
-
-def checksum(path):
-    return hashlib.sha256(path.read_bytes()).hexdigest()
+from integrity import checksum
 
 
 def main():

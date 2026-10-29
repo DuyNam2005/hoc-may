@@ -1,4 +1,3 @@
-import hashlib
 import json
 
 import joblib
@@ -8,10 +7,7 @@ import pandas as pd
 
 from baseline import calculate_metrics, predict_baseline
 from data import PROJECT_ROOT
-
-
-def checksum(path):
-    return hashlib.sha256(path.read_bytes()).hexdigest()
+from integrity import checksum, verify_frozen_artifacts, read_verified_test_report
 
 
 def print_results(result):
@@ -37,14 +33,6 @@ def main():
     figures_dir = reports_dir / "figures"
     result_path = reports_dir / "test_metrics.json"
 
-    # Chạy lại chỉ hiển thị kết quả đã lưu.
-    if result_path.exists():
-        with result_path.open(encoding="utf-8") as file:
-            result = json.load(file)
-        print("Dang hien thi ket qua test da luu.")
-        print_results(result)
-        return
-
     with (models_dir / "model_config.json").open(
         encoding="utf-8"
     ) as file:
@@ -52,22 +40,14 @@ def main():
 
     pipeline_path = models_dir / "forecast_pipeline.joblib"
 
-    # Kiểm tra mô hình và train không thay đổi sau khi chốt.
-    if checksum(pipeline_path) != config["pipeline_sha256"]:
-        raise ValueError("Pipeline da thay doi sau khi chot.")
+    # Even a cached report must match the current frozen artifacts.
+    if result_path.exists():
+        result = read_verified_test_report(PROJECT_ROOT, config)
+        print("Dang hien thi ket qua test da luu, da xac minh checksum.")
+        print_results(result)
+        return
 
-    if checksum(data_dir / "train.csv") != config["train_sha256"]:
-        raise ValueError("Train da thay doi sau khi chot.")
-
-    if (
-        checksum(data_dir / "validation.csv")
-        != config["validation_sha256"]
-    ):
-        raise ValueError("Validation da thay doi sau khi chot.")
-
-    if config["prediction_policy"] != "maximum(raw_prediction, 0)":
-        raise ValueError("Quy tac dau ra khong khop.")
-
+    verify_frozen_artifacts(PROJECT_ROOT, config)
     pipeline = joblib.load(pipeline_path)
     train = pd.read_csv(data_dir / "train.csv")
     test_path = data_dir / "test.csv"
